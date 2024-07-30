@@ -3,16 +3,17 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Ground
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Player
   - Water
   - UI
-  - 
-  - 
+  - Pickable
+  - Ground
   - 
   - 
   - 
@@ -40,4 +41,16 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Background
+    uniqueID: 2807267301
+    locked: 0
+  - name: Ground
+    uniqueID: 3615577881
+    locked: 0
+  - name: Pickable
+    uniqueID: 3587990345
+    locked: 0
+  - name: Player
+    uniqueID: 3809238327
     locked: 0
