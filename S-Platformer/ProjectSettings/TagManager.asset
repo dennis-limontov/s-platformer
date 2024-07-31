@@ -14,7 +14,7 @@ TagManager:
   - UI
   - Pickable
   - Ground
-  - 
+  - Obstacle
   - 
   - 
   - 
@@ -45,8 +45,14 @@ TagManager:
   - name: Background
     uniqueID: 2807267301
     locked: 0
+  - name: Environment
+    uniqueID: 1854169695
+    locked: 0
   - name: Ground
     uniqueID: 3615577881
+    locked: 0
+  - name: Obstacle
+    uniqueID: 1366655843
     locked: 0
   - name: Pickable
     uniqueID: 3587990345

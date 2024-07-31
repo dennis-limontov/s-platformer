@@ -1,13 +1,9 @@
-using System;
 using UnityEngine;
 
 namespace SPlatformer
 {
     public class GameController : MonoBehaviour
     {
-        [SerializeField]
-        private PickableEventChannel _keyChannel;
-
         [SerializeField]
         private GameObject _player;
 
@@ -31,7 +27,8 @@ namespace SPlatformer
 
         private void OnDestroy()
         {
-            _keyChannel.OnPick -= PickHandler;
+            EventHub.OnKeyCollected -= KeyCollectedHandler;
+            EventHub.OnFinishReached -= FinishReachedHandler;
             EventHub.OnGameRestarted -= GameRestartedHandler;
             EventHub.OnFallingHappened -= MovePlayerToCheckPoint;
             EventHub.OnCheckPointCrossed -= CheckPointCrossedHandler;
@@ -45,7 +42,8 @@ namespace SPlatformer
             EventHub.OnCheckPointCrossed += CheckPointCrossedHandler;
             EventHub.OnFallingHappened += MovePlayerToCheckPoint;
             EventHub.OnGameRestarted += GameRestartedHandler;
-            _keyChannel.OnPick += PickHandler;
+            EventHub.OnFinishReached += FinishReachedHandler;
+            EventHub.OnKeyCollected += KeyCollectedHandler;
             EventHub.OnKeyChanged?.Invoke(CurrentKeys, _keysAmount);
         }
 
@@ -67,10 +65,17 @@ namespace SPlatformer
             CurrentKeys = 0;
         }
 
-        private void PickHandler(Pickable pickable)
+        private void FinishReachedHandler()
+        {
+            if (_currentKeys == _keysAmount)
+            {
+                EventHub.OnGameRestarted?.Invoke();
+            }
+        }
+
+        private void KeyCollectedHandler()
         {
             CurrentKeys++;
-            pickable.gameObject.SetActive(false);
         }
     }
 }
