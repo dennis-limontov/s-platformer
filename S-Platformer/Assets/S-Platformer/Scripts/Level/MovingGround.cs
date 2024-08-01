@@ -8,7 +8,7 @@ namespace SPlatformer
         private MovingGroundColliderTop _colliderTop;
 
         [SerializeField]
-        private int _steps = 100;
+        private int _steps = 300;
 
         [SerializeField]
         private Transform _waypointA;
@@ -21,8 +21,10 @@ namespace SPlatformer
         private Rigidbody2D _rigidbody;
 
         private int _stepNow = 0;
-        
+
         private int _way = -1;
+
+        private Vector2 _speed;
 
         private void Awake()
         {
@@ -35,7 +37,7 @@ namespace SPlatformer
 
         private void FixedUpdate()
         {
-            Vector2 vector = (_waypointA.position - _waypointB.position) / _steps;
+            _speed = (_waypointA.position - _waypointB.position) / _steps;
             if (_stepNow == _steps)
             {
                 _stepNow = 0;
@@ -48,7 +50,7 @@ namespace SPlatformer
             }
             _stepNow++;
 
-            _rigidbody.MovePosition((Vector2)transform.position + vector * _way);
+            _rigidbody.MovePosition((Vector2)transform.position + _speed * _way);
         }
 
         private void OnDestroy()
@@ -60,11 +62,22 @@ namespace SPlatformer
         private void Connect(Rigidbody2D player)
         {
             _distanceJoint.connectedBody = player;
+            _distanceJoint.connectedBody.GetComponent<PlayerMovement>().OnSpeedCalculated
+                += SpeedCalculatedHandler;
         }
 
         private void Disconnect(Rigidbody2D player)
         {
+            _distanceJoint.connectedBody.GetComponent<PlayerMovement>().OnSpeedCalculated
+                -= SpeedCalculatedHandler;
             _distanceJoint.connectedBody = null;
+        }
+
+        private void SpeedCalculatedHandler()
+        {
+            Vector2 localVelocity = _distanceJoint.connectedBody.velocity;
+            localVelocity.x += _speed.x * _way / Time.fixedDeltaTime;
+            _distanceJoint.connectedBody.velocity = localVelocity;
         }
     }
 }

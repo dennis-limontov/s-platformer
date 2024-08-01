@@ -134,3 +134,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <Increment>k__BackingField: 1
+  _medicalKitSound: {fileID: 8300000, guid: f7bb80ac7c41451448ee5cb136ad1c4f, type: 3}

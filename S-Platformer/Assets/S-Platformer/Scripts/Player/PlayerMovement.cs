@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using static UnityEngine.InputSystem.InputAction;
 
@@ -13,6 +14,15 @@ namespace SPlatformer
 
         [SerializeField]
         private float _moveSpeed = 5f;
+
+        [SerializeField]
+        private AudioClip _landingSound;
+
+        [SerializeField]
+        [Range(0f, 1f)]
+        private float _landingSoundVolume = 1f;
+
+        public event Action OnSpeedCalculated;
 
         private Rigidbody2D _rigidbody;
 
@@ -34,6 +44,7 @@ namespace SPlatformer
         private void FixedUpdate()
         {
             _rigidbody.velocity = new Vector2(_moveDirection * _moveSpeed, _rigidbody.velocity.y);
+            OnSpeedCalculated?.Invoke();
         }
 
         private void OnCollisionEnter2D(Collision2D collision)
@@ -42,6 +53,8 @@ namespace SPlatformer
             {
                 _isGrounded = true;
                 _animator.SetBool(ANIMATION_JUMP, false);
+                AudioController.Instance.SetSoundVolume(_landingSoundVolume);
+                AudioController.Instance.Play(_landingSound);
             }
         }
 

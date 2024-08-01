@@ -11,6 +11,12 @@ namespace SPlatformer
         [SerializeField]
         private int _maxHealth;
 
+        [SerializeField]
+        private AudioClip _gameOverSound;
+
+        [SerializeField]
+        private AudioClip _hurtSound;
+
         private bool _isInvulnerable = false;
 
         private int _currentHealth;
@@ -58,7 +64,12 @@ namespace SPlatformer
                 CurrentHealth -= hurtAmount;
                 if (CurrentHealth <= 0)
                 {
+                    AudioController.Instance.Play(_gameOverSound);
                     EventHub.OnGameRestarted?.Invoke();
+                }
+                else
+                {
+                    AudioController.Instance.Play(_hurtSound);
                 }
 
                 StartCoroutine(Invulnerable());

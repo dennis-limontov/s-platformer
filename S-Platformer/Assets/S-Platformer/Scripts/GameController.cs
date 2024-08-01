@@ -10,9 +10,12 @@ namespace SPlatformer
         [SerializeField]
         private Transform _startCheckPoint;
 
+        [SerializeField]
+        private AudioClip _victorySound;
+
         private Transform _currentCheckPoint;
 
-        private int _keysAmount;
+        public int KeysAmount { get; private set; }
 
         private int _currentKeys;
         private int CurrentKeys
@@ -21,8 +24,20 @@ namespace SPlatformer
             set
             {
                 _currentKeys = value;
-                EventHub.OnKeyChanged?.Invoke(_currentKeys, _keysAmount);
+                EventHub.OnKeyChanged?.Invoke(_currentKeys, KeysAmount);
             }
+        }
+
+        private void Awake()
+        {
+            EventHub.OnCheckPointCrossed += CheckPointCrossedHandler;
+            EventHub.OnFallingHappened += MovePlayerToCheckPoint;
+            EventHub.OnGameRestarted += GameRestartedHandler;
+            EventHub.OnFinishReached += FinishReachedHandler;
+            EventHub.OnKeyCollected += KeyCollectedHandler;
+
+            KeysAmount = FindObjectsByType<Key>(FindObjectsInactive.Include,
+                FindObjectsSortMode.None).Length;
         }
 
         private void OnDestroy()
@@ -37,14 +52,8 @@ namespace SPlatformer
         private void Start()
         {
             GameRestartedHandler();
-            _keysAmount = FindObjectsByType<Key>(FindObjectsInactive.Include,
-                FindObjectsSortMode.None).Length;
-            EventHub.OnCheckPointCrossed += CheckPointCrossedHandler;
-            EventHub.OnFallingHappened += MovePlayerToCheckPoint;
-            EventHub.OnGameRestarted += GameRestartedHandler;
-            EventHub.OnFinishReached += FinishReachedHandler;
-            EventHub.OnKeyCollected += KeyCollectedHandler;
-            EventHub.OnKeyChanged?.Invoke(CurrentKeys, _keysAmount);
+            
+            EventHub.OnKeyChanged?.Invoke(CurrentKeys, KeysAmount);
         }
 
         private void CheckPointCrossedHandler(Transform transform)
@@ -67,8 +76,9 @@ namespace SPlatformer
 
         private void FinishReachedHandler()
         {
-            if (_currentKeys == _keysAmount)
+            if (_currentKeys == KeysAmount)
             {
+                AudioController.Instance.Play(_victorySound);
                 EventHub.OnGameRestarted?.Invoke();
             }
         }
